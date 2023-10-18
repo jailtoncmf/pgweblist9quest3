@@ -1,0 +1,47 @@
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+@WebServlet("/SessionServlet")
+public class SessionServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Obtém a sessão ou cria uma nova sessão se ela não existir
+        HttpSession session = request.getSession();
+
+        // Obtém ou cria um atributo "count" para rastrear o número de acessos
+        Integer count = (Integer) session.getAttribute("count");
+        if (count == null) {
+            count = 1;
+        } else {
+            count++;
+        }
+        session.setAttribute("count", count);
+
+        // Mostra o ID da sessão
+        out.println("ID da sessão: " + session.getId() + "<br>");
+
+        // Mostra a data e hora da criação da sessão
+        Date creationTime = new Date(session.getCreationTime());
+        out.println("Data e Hora da Criação da Sessão: " + creationTime + "<br>");
+
+        // Mostra a data e hora de acesso da última sessão
+        Date lastAccessedTime = new Date(session.getLastAccessedTime());
+        out.println("Data e Hora do Último Acesso: " + lastAccessedTime + "<br>");
+
+        // Mostra uma mensagem após a 5ª sessão
+        if (count >= 5) {
+            out.println("Você acessou a página mais de 5 vezes!");
+        }
+
+        out.close();
+    }
+}
